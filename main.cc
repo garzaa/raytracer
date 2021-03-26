@@ -7,8 +7,25 @@
 
 color bottom = color(1.0, 1.0, 1.0);
 color top    = color(0.5, 0.7, 1.0);
+color red    = color(1.0, 0.0, 0.0);
 
-color default_ray_color(const ray& r) {
+bool hit_sphere(const point3& center, double radius, const ray& r) {
+    vec3 oc = r.origin() - center;
+    float a = dot(r.direction(), r.direction());
+    float b = 2.0 * dot(oc, r.direction());
+    float c = dot(oc, oc) - radius*radius;
+    float discriminant = b*b - 4*a*c;
+    // > 0 means two roots
+    // = 0 means one root
+    // < 0 means pain if you're in middle school
+    return (discriminant > 0);
+}
+
+color ray_color(const ray& r) {
+    if (hit_sphere(point3(0, 0, -1), 0.5, r)) {
+        return red;
+    }
+
     vec3 unit_direction = normalize(r.direction());
     // normalize the y-dir back to image uv-space
     float t = 0.5 * (unit_direction.y() + 1.0);
@@ -19,7 +36,7 @@ int main() {
 
     // 1600x900 / 4
     const float aspect_ratio = 16.0 / 9.0;
-    const int width = 900;
+    const int width = 400;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);
@@ -27,7 +44,6 @@ int main() {
     // header: image params
     std::cout << "P3\n" << width << ' ' << height << "\n255\n";
 
-    // the original had a prefix increment for some reason
     for (int j = height-1; j >= 0; j--) {
         std::cerr << "\r" << j << " lines left" << ' ' << std::flush;
         for (int i = 0; i < width; i++) {
@@ -35,7 +51,8 @@ int main() {
             float u = float(i) / (width-1);
             float v = float(j) / (height-1);
 
-            color pixel = default_ray_color(cam.get_ray(u, v));
+            ray r = cam.get_ray(u, v);
+            color pixel = ray_color(r);
             
             write_color(std::cout, pixel);
         }

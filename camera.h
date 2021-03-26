@@ -14,11 +14,12 @@ class camera {
 
     public:
         camera(float aspect) {
+            aspect_ratio = aspect;
+            
             float viewport_height = 2.0;
-            float viewport_width = viewport_height * aspect_ratio;
+            float viewport_width = aspect_ratio * viewport_height;
             float focal_length = 1.0;
             
-            aspect_ratio = aspect;
             origin = point3(0, 0, 0);
             horizontal = vec3(viewport_width, 0, 0);
             vertical = vec3(0, viewport_height, 0);
