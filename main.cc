@@ -10,7 +10,8 @@ color top    = color(0.5, 0.7, 1.0);
 color red    = color(1.0, 0.0, 0.0);
 
 color color_normal(vec3 n) {
-    return 0.5*color(n.x()+1, n.y()+1, n.z()+1);
+    // map (-1, 1) to (0, 1)
+    return 0.5 * color(n.x()+1, n.y()+1, n.z()+1);
 }
 
 float hit_sphere(const point3& center, double radius, const ray& r) {
