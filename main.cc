@@ -16,10 +16,10 @@ color color_normal(vec3 n) {
 
 float hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
-    float a = dot(r.direction(), r.direction());
-    float b = 2.0 * dot(oc, r.direction());
-    float c = dot(oc, oc) - radius*radius;
-    float discriminant = b*b - 4*a*c;
+    float a = r.direction().sqr_magnitude();
+    float half_b = dot(oc, r.direction());
+    float c = oc.sqr_magnitude() - radius*radius;
+    float discriminant = half_b*half_b - a*c;
     // > 0 means two roots
     // = 0 means one root
     // < 0 means pain if you're in middle school
@@ -27,7 +27,7 @@ float hit_sphere(const point3& center, double radius, const ray& r) {
         return -1;
     } else {
         // return the nearest hit
-        return (-b - sqrt(discriminant)) / (a * 2.0);
+        return (-half_b - sqrt(discriminant)) / a;
     }
 }
 
