@@ -34,7 +34,7 @@ color ray_color(const ray& r) {
     float t = hit_sphere(point3(0, 0, -1), 0.5, r);
     
     if (t > 0) {
-        vec3 normal = normalize(r.at(t) - vec3(0, 0, -1));
+        vec3 normal = normalize(r.at(t) + vec3(0, 0, 1));
         return color_normal(normal);
     }
 
