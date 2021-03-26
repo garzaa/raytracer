@@ -10,14 +10,15 @@ class camera {
         point3 bottom_left_corner;
         vec3 horizontal;
         vec3 vertical;
-        const float aspect_ratio = 16.0 / 9.0;
+        float aspect_ratio;
 
     public:
-        camera() {
+        camera(float aspect) {
             float viewport_height = 2.0;
             float viewport_width = viewport_height * aspect_ratio;
             float focal_length = 1.0;
-
+            
+            aspect_ratio = aspect;
             origin = point3(0, 0, 0);
             horizontal = vec3(viewport_width, 0, 0);
             vertical = vec3(0, viewport_height, 0);

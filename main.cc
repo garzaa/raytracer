@@ -21,7 +21,7 @@ int main() {
     const int width = 900;
     const int height = static_cast<int>(width / aspect_ratio);
 
-    camera cam;
+    camera cam = camera(aspect_ratio);
 
     // header: image params
     std::cout << "P3\n" << width << ' ' << height << "\n255\n";
