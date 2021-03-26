@@ -10,6 +10,7 @@ color top    = color(0.5, 0.7, 1.0);
 
 color default_ray_color(const ray& r) {
     vec3 unit_direction = normalize(r.direction());
+    // normalize the y-dir back to image uv-space
     float t = 0.5 * (unit_direction.y() + 1.0);
     return lerp(bottom, top, t);
 }
