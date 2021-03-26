@@ -9,7 +9,11 @@ color bottom = color(1.0, 1.0, 1.0);
 color top    = color(0.5, 0.7, 1.0);
 color red    = color(1.0, 0.0, 0.0);
 
-bool hit_sphere(const point3& center, double radius, const ray& r) {
+color color_normal(vec3 n) {
+    return 0.5*color(n.x()+1, n.y()+1, n.z()+1);
+}
+
+float hit_sphere(const point3& center, double radius, const ray& r) {
     vec3 oc = r.origin() - center;
     float a = dot(r.direction(), r.direction());
     float b = 2.0 * dot(oc, r.direction());
@@ -18,17 +22,25 @@ bool hit_sphere(const point3& center, double radius, const ray& r) {
     // > 0 means two roots
     // = 0 means one root
     // < 0 means pain if you're in middle school
-    return (discriminant > 0);
+    if (discriminant < 0) {
+        return -1;
+    } else {
+        // return the nearest hit
+        return (-b - sqrt(discriminant)) / (a * 2.0);
+    }
 }
 
 color ray_color(const ray& r) {
-    if (hit_sphere(point3(0, 0, -1), 0.5, r)) {
-        return red;
+    float t = hit_sphere(point3(0, 0, -1), 0.5, r);
+    
+    if (t > 0) {
+        vec3 normal = normalize(r.at(t) - vec3(0, 0, -1));
+        return color_normal(normal);
     }
 
     vec3 unit_direction = normalize(r.direction());
     // normalize the y-dir back to image uv-space
-    float t = 0.5 * (unit_direction.y() + 1.0);
+    t = 0.5 * (unit_direction.y() + 1.0);
     return lerp(bottom, top, t);
 }
 
