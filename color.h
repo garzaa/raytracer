@@ -13,7 +13,9 @@ void write_color(std::ostream &out, color pixel) {
 }
 
 inline float map_color(float multisample, int samples) {
-    return saturate(multisample / float(samples)) * 256; 
+    // gamma correction at gamma=2 (raise to the power of 1/gamma aka sqrt)
+    float gamma = sqrt(multisample / float(samples));
+    return saturate(gamma) * 256; 
 }
 
 void write_color(std::ostream &out, color pixel_color, int samples_per_pixel) {

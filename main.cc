@@ -11,6 +11,7 @@ color bottom = color(1.0, 1.0, 1.0);
 color top    = color(0.5, 0.7, 1.0);
 color red    = color(1.0, 0.0, 0.0);
 color white  = color(1.0, 1.0, 1.0);
+color black  = color(0.0, 0.0, 0.0);
 
 color color_normal(vec3 n) {
     // map (-1, 1) to (0, 1)
@@ -34,10 +35,15 @@ float hit_sphere(const point3& center, double radius, const ray& r) {
     }
 }
 
-color ray_color(const ray& r, const hittable& world) {
+color ray_color(const ray& r, const hittable& world, int bounces) {
+    if (--bounces <= 0) {
+        return black;
+    }
+
     hit_record hit;
-    if (world.onhit(r, 0, infinity, hit)) {
-        return 0.5 * (hit.normal + white);
+    if (world.onhit(r, 0.001, infinity, hit)) {
+        point3 target = hit.point + hit.normal + random_on_unit_sphere();
+        return 0.5 * ray_color(ray(hit.point, target - hit.point), world, bounces);
     }
 
     vec3 unit_direction = normalize(r.direction());
@@ -48,10 +54,10 @@ color ray_color(const ray& r, const hittable& world) {
 
 int main() {
 
-    // 1600x900 / 4
     const float aspect_ratio = 16.0 / 9.0;
     const int width = 400;
-    const int aa_samples = 100;
+    const int max_bounces = 25;
+    const int aa_samples = 50;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);
@@ -73,7 +79,7 @@ int main() {
                 float u = (i + randfloat()) / (width-1);
                 float v = (j + randfloat()) / (height-1);
                 ray r = cam.get_ray(u, v);
-                pixel += ray_color(r, world);
+                pixel += ray_color(r, world, max_bounces);
             }
             
             write_color(std::cout, pixel, aa_samples);

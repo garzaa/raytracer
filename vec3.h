@@ -147,19 +147,12 @@ inline vec3 normalize(vec3 v) {
     return v / v.magnitude();
 }
 
-inline vec3 lerp(vec3 a, vec3 b, float t) {
-    return a + t*(b-a);
+inline vec3 random_on_unit_sphere() {
+    return normalize(vec3::random());
 }
 
-inline vec3 random_in_unit_sphere() {
-    while (true) {
-        vec3 v = vec3::random(-1, 1);
-        if (v.sqr_magnitude() >= 1) {
-            continue;
-        }
-
-        return v;
-    }
+inline vec3 lerp(vec3 a, vec3 b, float t) {
+    return a + t*(b-a);
 }
 
 #endif
