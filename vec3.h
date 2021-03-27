@@ -16,6 +16,14 @@ class vec3 {
         vec3(): e{0, 0, 0} {}
         vec3(float x, float y, float z): e{x, y, z} {}
 
+        inline static vec3 random() {
+            return vec3(randfloat(), randfloat(), randfloat());
+        }
+
+        inline static vec3 random(float min, float max) {
+            return vec3(randrange(min, max), randrange(min, max), randrange(min, max));
+        }
+
         float x() const {
             return e[0];
         }
@@ -141,6 +149,17 @@ inline vec3 normalize(vec3 v) {
 
 inline vec3 lerp(vec3 a, vec3 b, float t) {
     return a + t*(b-a);
+}
+
+inline vec3 random_in_unit_sphere() {
+    while (true) {
+        vec3 v = vec3::random(-1, 1);
+        if (v.sqr_magnitude() >= 1) {
+            continue;
+        }
+
+        return v;
+    }
 }
 
 #endif

@@ -12,23 +12,19 @@ void write_color(std::ostream &out, color pixel) {
         << '\n';
 }
 
+inline float map_color(float multisample, int samples) {
+    return saturate(multisample / float(samples)) * 256; 
+}
+
 void write_color(std::ostream &out, color pixel_color, int samples_per_pixel) {
     float r = pixel_color.x();
     float g = pixel_color.y();
     float b = pixel_color.z();
 
-    r /= float(samples_per_pixel);
-    g /= float(samples_per_pixel);
-    b /= float(samples_per_pixel);
-
     // Write the translated [0,255] value of each color component.
-    out << static_cast<int>(saturate(r) * 256) << ' '
-        << static_cast<int>(saturate(g) * 256) << ' '
-        << static_cast<int>(saturate(b) * 256) << '\n';
-}
-
-inline float map_color(float multisample, int samples) {
-    return saturate(multisample / float(samples)) * 256; 
+    out << static_cast<int>(map_color(r, samples_per_pixel)) << ' '
+        << static_cast<int>(map_color(g, samples_per_pixel)) << ' '
+        << static_cast<int>(map_color(b, samples_per_pixel)) << '\n';
 }
 
 #endif
