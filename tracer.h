@@ -1,6 +1,7 @@
 #ifndef TRACER_H
 #define TRACER_H
 
+#include <cstdlib>
 #include <cmath>
 #include <limits>
 #include <memory>
@@ -14,6 +15,25 @@ const double pi = 3.1415926535897932385;
 
 inline double deg2rad(float degrees) {
     return degrees * pi / 180.0;
+}
+
+inline float randfloat() {
+    return rand() / (RAND_MAX + 1.0);
+}
+
+inline float randrange(float min, float max) {
+    return min + (max-min) * randfloat();
+}
+
+inline float clamp(float x, float min, float max) {
+    if (x < min) return min;
+    if (x > max) return max;
+    return x;
+
+}
+
+inline float saturate(float x) {
+    return clamp(x, 0, 1);
 }
 
 #include "ray.h"

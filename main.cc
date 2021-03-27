@@ -10,6 +10,7 @@
 color bottom = color(1.0, 1.0, 1.0);
 color top    = color(0.5, 0.7, 1.0);
 color red    = color(1.0, 0.0, 0.0);
+color white  = color(1.0, 1.0, 1.0);
 
 color color_normal(vec3 n) {
     // map (-1, 1) to (0, 1)
@@ -33,17 +34,15 @@ float hit_sphere(const point3& center, double radius, const ray& r) {
     }
 }
 
-color ray_color(const ray& r) {
-    float distance = hit_sphere(point3(0, 0, -1), 0.5, r);
-    
-    if (distance > 0) {
-        vec3 normal = normalize(r.at(distance) + vec3(0, 0, 1));
-        return color_normal(normal);
+color ray_color(const ray& r, const hittable& world) {
+    hit_record hit;
+    if (world.onhit(r, 0, infinity, hit)) {
+        return 0.5 * (hit.normal + white);
     }
 
     vec3 unit_direction = normalize(r.direction());
     // normalize the y-dir back to image uv-space
-    distance = 0.5 * (unit_direction.y() + 1.0);
+    float distance = 0.5 * (unit_direction.y() + 1.0);
     return lerp(bottom, top, distance);
 }
 
@@ -52,9 +51,14 @@ int main() {
     // 1600x900 / 4
     const float aspect_ratio = 16.0 / 9.0;
     const int width = 400;
+    const int aa_samples = 100;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);
+
+    hittable_list world;
+    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
+    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
 
     // header: image params
     std::cout << "P3\n" << width << ' ' << height << "\n255\n";
@@ -62,14 +66,17 @@ int main() {
     for (int j = height-1; j >= 0; j--) {
         std::cerr << "\r" << j << " lines left" << ' ' << std::flush;
         for (int i = 0; i < width; i++) {
-            // u and v are the coordinates inside the image, starting at the bottom left
-            float u = float(i) / (width-1);
-            float v = float(j) / (height-1);
-
-            ray r = cam.get_ray(u, v);
-            color pixel = ray_color(r);
+            color pixel = color(0, 0, 0);
             
-            write_color(std::cout, pixel);
+            for (int s=0; s<aa_samples; s++) {
+                // u and v are the coordinates inside the image, starting at the bottom left
+                float u = (i + randfloat()) / (width-1);
+                float v = (j + randfloat()) / (height-1);
+                ray r = cam.get_ray(u, v);
+                pixel += ray_color(r, world);
+            }
+            
+            write_color(std::cout, pixel, aa_samples);
         }
     }
 }
