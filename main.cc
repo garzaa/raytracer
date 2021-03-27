@@ -32,17 +32,17 @@ float hit_sphere(const point3& center, double radius, const ray& r) {
 }
 
 color ray_color(const ray& r) {
-    float t = hit_sphere(point3(0, 0, -1), 0.5, r);
+    float distance = hit_sphere(point3(0, 0, -1), 0.5, r);
     
-    if (t > 0) {
-        vec3 normal = normalize(r.at(t) + vec3(0, 0, 1));
+    if (distance > 0) {
+        vec3 normal = normalize(r.at(distance) + vec3(0, 0, 1));
         return color_normal(normal);
     }
 
     vec3 unit_direction = normalize(r.direction());
     // normalize the y-dir back to image uv-space
-    t = 0.5 * (unit_direction.y() + 1.0);
-    return lerp(bottom, top, t);
+    distance = 0.5 * (unit_direction.y() + 1.0);
+    return lerp(bottom, top, distance);
 }
 
 int main() {
