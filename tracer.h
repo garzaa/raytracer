@@ -38,5 +38,7 @@ inline float saturate(float x) {
 
 #include "ray.h"
 #include "vec3.h"
+#include "hittable.h"
+#include "material.h"
 
 #endif

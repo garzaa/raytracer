@@ -2,16 +2,18 @@
 #define SPHERE_H
 
 #include "hittable.h"
-#include "vec3.h"
+#include "tracer.h"
 
 class sphere : public hittable {
     public:
         point3 center;
         float radius;
+        shared_ptr<material> mat_ptr;
 
     public:
         sphere() {}
-        sphere(point3 c, float r): center(c), radius(r) {};
+        sphere(point3 c, float r, shared_ptr<material> m): 
+            center(c), radius(r), mat_ptr(m) {};
 
         virtual bool onhit(
             const ray& r,
@@ -55,6 +57,7 @@ bool sphere::onhit(
         vec3 outward_normal = (hit.point - center) / radius;
         hit.set_face_normal(r, outward_normal);
         hit.normal = (hit.point - center) / radius;
+        hit.mat_ptr = mat_ptr;
 
         return true;
 

@@ -1,11 +1,12 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
 
-#include "ray.h"
+#include "tracer.h"
 
 struct hit_record {
     point3 point;
     vec3 normal;
+    shared_ptr<material> mat_ptr;
     float distance;
     bool front_face;
 

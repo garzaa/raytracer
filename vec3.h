@@ -94,6 +94,11 @@ class vec3 {
                 +  e[1] * v[1]
                 +  e[2] * v[2];
         }
+
+        const bool near_zero() {
+            const float margin = 1e-8;
+            return (fabs(e[0]) < margin) && fabs(e[1]) < margin) && fabs(e[2]) < margin));
+        }
 };
 
 // type aliases
@@ -153,6 +158,10 @@ inline vec3 random_on_unit_sphere() {
 
 inline vec3 lerp(vec3 a, vec3 b, float t) {
     return a + t*(b-a);
+}
+
+vec3 reflect(const vec3& i, const vec3& n) {
+    return i - 2*n*dot(i, n);
 }
 
 #endif
