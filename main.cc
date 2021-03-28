@@ -31,18 +31,17 @@ float hit_sphere(const point3& center, double radius, const ray& r) {
 }
 
 color ray_color(const ray& r, const hittable& world, int bounces) {
-    if (--bounces <= 0) {
+    if (bounces <= 0) {
         return black;
     }
 
     hit_record hit;
     if (world.onhit(r, 0.001, infinity, hit)) {
-        point3 target = hit.point + hit.normal + random_on_unit_sphere();
         ray scattered;
         color attenuation;
 
         if (hit.mat_ptr->scatter(r, hit, attenuation, scattered)) {
-            return attenuation * ray_color(scattered, world, bounces);
+            return attenuation * ray_color(scattered, world, bounces-1);
         }
 
         return black;
@@ -58,8 +57,8 @@ int main() {
 
     const float aspect_ratio = 16.0 / 9.0;
     const int width = 400;
-    const int max_bounces = 50;
-    const int aa_samples = 50;
+    const int max_bounces = 10;
+    const int aa_samples = 2;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);

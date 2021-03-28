@@ -152,8 +152,16 @@ inline vec3 normalize(vec3 v) {
     return v / v.magnitude();
 }
 
+vec3 random_in_unit_sphere() {
+    while (true) {
+        auto p = vec3::random(-1,1);
+        if (p.sqr_magnitude() >= 1) continue;
+        return p;
+    }
+}
+
 inline vec3 random_on_unit_sphere() {
-    return normalize(vec3::random());
+    return normalize(random_in_unit_sphere());
 }
 
 inline vec3 lerp(vec3 a, vec3 b, float t) {
@@ -162,6 +170,14 @@ inline vec3 lerp(vec3 a, vec3 b, float t) {
 
 vec3 reflect(const vec3& i, const vec3& n) {
     return i - 2*n*dot(i, n);
+}
+
+vec3 random_in_hemisphere(const vec3& normal) {
+    vec3 in_unit_sphere = random_in_unit_sphere();
+    if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+        return in_unit_sphere;
+    else
+        return -in_unit_sphere;
 }
 
 #endif
