@@ -97,7 +97,7 @@ class vec3 {
 
         const bool near_zero() {
             const float margin = 1e-8;
-            return (fabs(e[0]) < margin) && fabs(e[1]) < margin) && fabs(e[2]) < margin));
+            return (fabs(e[0]) < margin) && (fabs(e[1]) < margin) && (fabs(e[2]) < margin);
         }
 };
 

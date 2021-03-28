@@ -38,7 +38,11 @@ inline float saturate(float x) {
 
 #include "ray.h"
 #include "vec3.h"
-#include "hittable.h"
-#include "material.h"
+
+color bottom = color(1.0, 1.0, 1.0);
+color top    = color(0.5, 0.7, 1.0);
+color red    = color(1.0, 0.0, 0.0);
+color white  = color(1.0, 1.0, 1.0);
+color black  = color(0.0, 0.0, 0.0);
 
 #endif

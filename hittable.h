@@ -3,6 +3,8 @@
 
 #include "tracer.h"
 
+class material;
+
 struct hit_record {
     point3 point;
     vec3 normal;

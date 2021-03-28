@@ -4,14 +4,9 @@
 #include "color.h"
 #include "hittable_list.h"
 #include "sphere.h"
+#include "material.h"
 
 #include <iostream>
-
-color bottom = color(1.0, 1.0, 1.0);
-color top    = color(0.5, 0.7, 1.0);
-color red    = color(1.0, 0.0, 0.0);
-color white  = color(1.0, 1.0, 1.0);
-color black  = color(0.0, 0.0, 0.0);
 
 color color_normal(vec3 n) {
     // map (-1, 1) to (0, 1)
@@ -43,7 +38,14 @@ color ray_color(const ray& r, const hittable& world, int bounces) {
     hit_record hit;
     if (world.onhit(r, 0.001, infinity, hit)) {
         point3 target = hit.point + hit.normal + random_on_unit_sphere();
-        return 0.5 * ray_color(ray(hit.point, target - hit.point), world, bounces);
+        ray scattered;
+        color attenuation;
+
+        if (hit.mat_ptr->scatter(r, hit, attenuation, scattered)) {
+            return attenuation * ray_color(scattered, world, bounces);
+        }
+
+        return black;
     }
 
     vec3 unit_direction = normalize(r.direction());
@@ -56,15 +58,23 @@ int main() {
 
     const float aspect_ratio = 16.0 / 9.0;
     const int width = 400;
-    const int max_bounces = 25;
+    const int max_bounces = 50;
     const int aa_samples = 50;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);
 
     hittable_list world;
-    world.add(make_shared<sphere>(point3(0, 0, -1), 0.5));
-    world.add(make_shared<sphere>(point3(0, -100.5, -1), 100));
+
+    auto ground = make_shared<lambertian>(color(0.8, 0.8, 0.0));
+    auto center = make_shared<lambertian>(color(0.7, 0.3, 0.3));
+    auto left   = make_shared<specular>(color(0.8, 0.8, 0.8));
+    auto right  = make_shared<specular>(color(0.8, 0.6, 0.2));
+
+    world.add(make_shared<sphere>(point3( 0.0, -100.5, -1.0), 100.0, ground));
+    world.add(make_shared<sphere>(point3( 0.0,    0.0, -1.0),   0.5, center));
+    world.add(make_shared<sphere>(point3(-1.0,    0.0, -1.0),   0.5, left));
+    world.add(make_shared<sphere>(point3( 1.0,    0.0, -1.0),   0.5, right));
 
     // header: image params
     std::cout << "P3\n" << width << ' ' << height << "\n255\n";
