@@ -57,8 +57,8 @@ int main() {
 
     const float aspect_ratio = 16.0 / 9.0;
     const int width = 400;
-    const int max_bounces = 10;
-    const int aa_samples = 2;
+    const int max_bounces = 50;
+    const int aa_samples = 20;
     const int height = static_cast<int>(width / aspect_ratio);
 
     camera cam = camera(aspect_ratio);
